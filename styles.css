@@ -261,3 +261,47 @@ img { display: block; max-width: 100%; }
 .nav-next { right: 15px; }
 
 .footer { text-align: center; color: var(--text-muted); padding-top: 20px; font-size: 12px; border-top: 1px solid var(--glass-border); }
+/* === FLOATING WHATSAPP WIDGET === */
+.floating-wa {
+    position: fixed;
+    bottom: 30px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366; /* Official WhatsApp Green */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 3000; /* Above everything */
+    transition: transform 0.3s ease;
+    animation: wa-pulse 2s infinite;
+}
+
+.floating-wa:hover {
+    transform: scale(1.1);
+}
+
+.floating-wa svg {
+    width: 35px;
+    height: 35px;
+    fill: #ffffff;
+}
+
+/* Pulse Animation */
+@keyframes wa-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+/* Mobile Responsiveness for Widget */
+@media (max-width: 480px) {
+    .floating-wa {
+        bottom: 20px;
+        right: 20px;
+        width: 55px;
+        height: 55px;
+    }
+}

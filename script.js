@@ -66,8 +66,9 @@ function applyTheme(index) {
     }
 }
 
+/* --- THIS FUNCTION REPLACES THE OLD updateUI() --- */
 function updateUI() {
-    // Initials or Image
+    // 1. Initials or Image
     const imgEl = document.querySelector('.profile-img');
     if(BRAND_DATA.img && BRAND_DATA.img.length > 4) {
         imgEl.src = `assets/profile/${BRAND_DATA.img}`;
@@ -75,18 +76,44 @@ function updateUI() {
         imgEl.src = generateLuxuryInitials(BRAND_DATA.name, 300);
     }
 
-    // Text
+    // 2. Text
     document.querySelector('.brand-name').textContent = BRAND_DATA.name;
     document.querySelector('.tagline').textContent = BRAND_DATA.tagline;
-    document.title = `${BRAND_DATA.name} | Luxury Store`; // Update Page Title
+    document.title = `${BRAND_DATA.name} | Luxury Store`;
 
-    // Socials
+    // 3. Social Icons (With Real WhatsApp SVG)
     const socialContainer = document.querySelector('.social-row');
     let html = '';
-    if(BRAND_DATA.insta) html += `<a href="${BRAND_DATA.insta}" class="social-icon"><i data-lucide="instagram"></i></a>`;
-    if(BRAND_DATA.tiktok) html += `<a href="${BRAND_DATA.tiktok}" class="social-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v6.14c0 3.48-2.32 6.66-5.83 7.57-4.14 1.05-8.31-1.76-8.91-5.78-.6-4.05 2.27-7.79 6.32-8.39.26-.04.52-.07.78-.08v4.18c-.8.02-1.6.21-2.29.58-1.95 1.05-2.74 3.47-1.8 5.53.94 2.06 3.44 3 5.56 2.15 1.6-.64 2.65-2.2 2.63-3.92V.02h-.54z"/></svg></a>`;
-    if(BRAND_DATA.whatsapp) html += `<a href="${BRAND_DATA.whatsapp}" class="social-icon"><i data-lucide="message-circle"></i></a>`;
+    
+    // Instagram
+    if(BRAND_DATA.insta) {
+        html += `<a href="${BRAND_DATA.insta}" target="_blank" class="social-icon"><i data-lucide="instagram"></i></a>`;
+    }
+    
+    // TikTok
+    if(BRAND_DATA.tiktok) {
+        html += `<a href="${BRAND_DATA.tiktok}" target="_blank" class="social-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v6.14c0 3.48-2.32 6.66-5.83 7.57-4.14 1.05-8.31-1.76-8.91-5.78-.6-4.05 2.27-7.79 6.32-8.39.26-.04.52-.07.78-.08v4.18c-.8.02-1.6.21-2.29.58-1.95 1.05-2.74 3.47-1.8 5.53.94 2.06 3.44 3 5.56 2.15 1.6-.64 2.65-2.2 2.63-3.92V.02h-.54z"/></svg></a>`;
+    }
+    
+    // WhatsApp (Header Icon - Real Logo)
+    if(BRAND_DATA.whatsapp) {
+        html += `<a href="${BRAND_DATA.whatsapp}" target="_blank" class="social-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M18.403 5.633A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.198 4.488L3.3 21.7l5.384-1.412a8.951 8.951 0 0 0 4.369 1.141h.004c4.948 0 8.975-4.026 8.977-8.976a8.91 8.91 0 0 0-3.631-6.82ZM12.054 19.92h-.003c-1.468 0-2.906-.395-4.16-1.14l-.299-.177-3.091.811.825-3.013-.194-.309a7.472 7.472 0 0 1-1.146-3.987c.002-4.12 3.354-7.473 7.478-7.473 1.998 0 3.876.779 5.289 2.193a7.447 7.447 0 0 1 2.19 5.291c-.002 4.12-3.356 7.473-7.483 7.473Zm4.093-5.603c-.224-.112-1.326-.654-1.531-.729-.206-.075-.355-.112-.505.112-.149.224-.579.729-.71.879-.13.149-.261.168-.485.056-.224-.112-.947-.349-1.804-1.113-.667-.595-1.117-1.329-1.248-1.554-.13-.224-.014-.345.098-.457.101-.1.224-.261.336-.392.112-.131.149-.224.224-.374.075-.149.037-.28-.019-.392-.056-.112-.505-1.217-.692-1.666-.181-.435-.366-.376-.504-.383-.13-.007-.28-.008-.429-.008-.15 0-.392.056-.597.28-.206.224-.785.767-.785 1.871 0 1.104.804 2.17.916 2.32.112.149 1.581 2.415 3.832 3.387 1.336.577 1.855.557 2.531.458.747-.108 1.326-.542 1.513-1.066.187-.524.187-.973.131-1.067-.056-.094-.206-.149-.43-.261Z"/>
+            </svg>
+        </a>`;
+    }
+    
     socialContainer.innerHTML = html;
+
+    // 4. Floating Widget Logic (NEW)
+    const floatBtn = document.getElementById('floating-wa-btn');
+    if(BRAND_DATA.whatsapp) {
+        floatBtn.href = BRAND_DATA.whatsapp;
+        floatBtn.classList.remove('hidden');
+    } else {
+        floatBtn.classList.add('hidden');
+    }
 }
 
 // === DYNAMIC FAVICON GENERATOR ===
