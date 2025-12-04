@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Affairs Store</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="theme-data" style="display:none;"></div>
+
+    <main class="luxury-container">
+        
+        <section id="header-section" class="dynamic-section"></section>
+
+        <section id="hero-section" class="dynamic-section"></section>
+
+        <section id="about-section" class="dynamic-section"></section>
+
+        <section id="howto-section" class="dynamic-section"></section>
+
+        <section id="collections-section" class="dynamic-section"></section>
+
+        <section id="testimonials-section" class="dynamic-section"></section>
+
+        <section id="vendor-section" class="dynamic-section"></section>
+
+        <section id="delivery-section" class="dynamic-section"></section>
+
+        <section id="payment-section" class="dynamic-section"></section>
+
+    </main>
+
+    <div id="collection-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="close-modal-btn" onclick="toggleCollectionModal(false)">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2>All Collections</h2>
+            <div id="modal-grid-container" class="grid-layout">
+                </div>
+        </div>
+    </div>
+
+    <div id="image-zoom-modal" class="modal-overlay hidden">
+        <span class="close-zoom" onclick="closeZoom()">&times;</span>
+        <img class="modal-content-img" id="img01">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

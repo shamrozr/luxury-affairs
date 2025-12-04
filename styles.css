@@ -1,0 +1,203 @@
+/* === 1. VARIABLES & RESET === */
+:root {
+    /* Dynamic Variables (Overwritten by CSV) */
+    --bg-color: #0f0f0f;
+    --text-color: #ffffff;
+    --accent-color: #D4AF37; /* Luxury Gold */
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --btn-bg: #D4AF37;
+    --btn-text: #000000;
+    
+    /* Fonts */
+    --font-head: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scroll from marquee */
+    transition: background-color 0.5s ease;
+}
+
+/* === 2. TYPOGRAPHY & UTILITIES === */
+h1, h2, h3 { font-family: var(--font-head); font-weight: 700; margin-bottom: 1rem; }
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+.hidden { display: none !important; }
+
+/* === 3. HEADER & PROFILE === */
+.header-container {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+}
+
+.profile-wrapper {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 15px;
+}
+
+.profile-pic {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 3px solid var(--accent-color);
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.brand-name { font-size: 2rem; color: var(--accent-color); letter-spacing: 1px; }
+.tagline { font-size: 0.9rem; opacity: 0.8; margin-bottom: 20px; }
+
+.social-icons { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+.icon-btn {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    width: 45px; height: 45px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid transparent;
+}
+.icon-btn:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+/* === 4. SECTIONS GENERAL === */
+.dynamic-section {
+    max-width: 800px;
+    margin: 0 auto 50px;
+    padding: 0 20px;
+}
+.section-title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--accent-color);
+    display: inline-block;
+    padding-bottom: 5px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* === 5. COLLECTIONS GRID === */
+.collections-wrapper { text-align: center; }
+.collection-preview-grid, .modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+.collection-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--card-bg);
+    display: block;
+}
+.collection-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.collection-card:hover img { transform: scale(1.1); }
+.collection-card span {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 10px;
+    font-family: var(--font-head);
+    font-weight: bold;
+}
+
+.view-all-btn {
+    margin-top: 25px;
+    padding: 12px 30px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    font-family: var(--font-body);
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* === 6. MARQUEE / INFINITE SCROLL === */
+.marquee-section { width: 100%; overflow: hidden; margin-bottom: 50px; }
+.marquee-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+.marquee-track {
+    display: inline-block;
+    animation: scroll 25s linear infinite;
+}
+.marquee-img {
+    height: 300px; /* Tall screenshot height */
+    width: auto;
+    margin-right: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--card-bg);
+    cursor: zoom-in;
+    vertical-align: middle;
+}
+
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* === 7. MODALS (Popups) === */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+/* Collection Modal */
+.modal-content {
+    background: var(--bg-color);
+    border: 1px solid var(--accent-color);
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    position: relative;
+}
+.close-modal-btn, .close-zoom {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 2rem;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* Image Zoom Modal */
+.modal-content-img {
+    max-width: 90%;
+    max-height: 90%;
+    border: 2px solid var(--accent-color);
+    border-radius: 5px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
