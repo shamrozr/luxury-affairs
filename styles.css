@@ -127,24 +127,74 @@ img { display: block; max-width: 100%; }
 .btn-gold:hover { transform: scale(1.02); }
 
 
-/* === 4. CAROUSELS & MARQUEES === */
+/* === 4. CAROUSELS & SLIDERS (UPDATED for Touch) === */
 
-/* Horizontal Snap Carousel (Collections) */
-.carousel-container {
-    display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-    gap: 15px; padding-bottom: 20px;
-    scrollbar-width: none;
+/* Common Container for Collections & Proofs */
+.carousel-container, .marquee-container {
+    display: flex;
+    overflow-x: auto; /* Enable Horizontal Scroll */
+    scroll-snap-type: x mandatory; /* Snap effect */
+    gap: 15px;
+    padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+    cursor: grab;
 }
-.carousel-container::-webkit-scrollbar { display: none; }
+.carousel-container::-webkit-scrollbar, 
+.marquee-container::-webkit-scrollbar { 
+    display: none; /* Hide scrollbar Chrome/Safari */
+}
 
-.product-card {
-    flex: 0 0 140px; height: 200px;
-    scroll-snap-align: start; border-radius: 15px; overflow: hidden;
-    position: relative; border: 1px solid var(--glass-border);
-    cursor: pointer;
+/* Ensure the inner track doesn't block scrolling */
+.marquee-track {
+    display: flex;
+    gap: 15px;
+    /* Animation removed here to allow drag. JS handles auto-scroll now. */
 }
-.product-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-.product-card:hover .product-img { transform: scale(1.1); }
+
+/* Common Item Style */
+.product-card, .marquee-item {
+    flex: 0 0 160px; /* Fixed width */
+    height: 250px;
+    scroll-snap-align: start;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    position: relative;
+    background: rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+
+.product-card:active, .marquee-item:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+
+.product-img, .marquee-item img, .marquee-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Video Play Button Overlay */
+.play-icon-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px; height: 50px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--gold);
+    pointer-events: none; /* Clicks pass through to item */
+}
+.play-icon-overlay svg {
+    fill: #fff;
+    width: 20px; height: 20px;
+    margin-left: 3px;
+}
+
+/* Collection Text Overlay */
 .product-overlay {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
@@ -154,34 +204,12 @@ img { display: block; max-width: 100%; }
 
 /* Skeleton Loader */
 .skeleton-loader {
-    flex: 0 0 140px; height: 200px; 
+    flex: 0 0 160px; height: 250px; 
     background: rgba(255,255,255,0.05);
-    border-radius: 15px;
+    border-radius: 12px;
     animation: pulse 1.5s infinite;
 }
 @keyframes pulse { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
-
-
-/* Infinite Scroll Marquee */
-.marquee-container { overflow: hidden; white-space: nowrap; padding: 10px 0 30px; }
-.marquee-track { 
-    display: inline-flex; 
-    /* Slow speed (45s) as requested */
-    animation: scroll 45s linear infinite; 
-    gap: 15px; 
-}
-.marquee-track:hover { animation-play-state: paused; }
-
-.marquee-item {
-    width: 160px; height: 280px; 
-    border-radius: 12px; overflow: hidden;
-    border: 2px solid var(--glass-border); flex-shrink: 0;
-    cursor: zoom-in; transition: transform 0.2s;
-}
-.marquee-item:hover { transform: scale(1.03); border-color: var(--gold); }
-.marquee-item img { width: 100%; height: 100%; object-fit: cover; }
-
-@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
 
 /* === 5. MODALS === */
@@ -194,7 +222,6 @@ img { display: block; max-width: 100%; }
 
 /* Collection Modal - Themed Background */
 .modal-content-card {
-    /* Uses the dynamic theme color, not black */
     background: var(--bg-dark); 
     border: 1px solid var(--gold);
     padding: 25px; width: 95%; max-width: 500px; height: 90vh;
@@ -227,10 +254,18 @@ img { display: block; max-width: 100%; }
 .modal-zoomed-img { 
     max-width: 95%; 
     max-height: 80vh; 
-    /* Containment: Prevents cropping */
     object-fit: contain; 
     border-radius: 8px; 
     border: 2px solid var(--gold);
+    background: #000;
+}
+
+/* Video Player in Modal */
+.modal-zoomed-video {
+    width: 100%;
+    max-height: 80vh;
+    border: 2px solid var(--gold);
+    border-radius: 8px;
     background: #000;
 }
 
@@ -261,7 +296,9 @@ img { display: block; max-width: 100%; }
 .nav-next { right: 15px; }
 
 .footer { text-align: center; color: var(--text-muted); padding-top: 20px; font-size: 12px; border-top: 1px solid var(--glass-border); }
-/* === FLOATING WHATSAPP WIDGET === */
+
+
+/* === 6. FLOATING WHATSAPP WIDGET === */
 .floating-wa {
     position: fixed;
     bottom: 30px;
@@ -274,7 +311,7 @@ img { display: block; max-width: 100%; }
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 3000; /* Above everything */
+    z-index: 3000;
     transition: transform 0.3s ease;
     animation: wa-pulse 2s infinite;
 }
