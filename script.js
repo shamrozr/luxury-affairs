@@ -77,6 +77,7 @@ function updateUI() {
     if(BRAND_DATA.img && BRAND_DATA.img.length > 4) {
         imgEl.src = `assets/profile/${BRAND_DATA.img}`;
     } else {
+        // Generates the new Signature Knot Logo if no image is uploaded
         imgEl.src = generateLuxuryInitials(BRAND_DATA.name, 300);
     }
 
@@ -117,23 +118,78 @@ function updateFavicon() {
     document.head.appendChild(link);
 }
 
+// === THE SIGNATURE KNOT LOGO GENERATOR ===
 function generateLuxuryInitials(name, size) {
     if(!name) return '';
+    
+    // 1. Setup Canvas
     const canvas = document.createElement('canvas');
-    canvas.width = size; canvas.height = size;
+    canvas.width = size; 
+    canvas.height = size;
     const ctx = canvas.getContext('2d');
+    
+    // 2. Fetch Theme Colors from CSS
     const style = getComputedStyle(document.documentElement);
     const gold = style.getPropertyValue('--gold').trim() || '#D4AF37';
-    const bg = style.getPropertyValue('--bg-dark').trim() || '#000000';
+    const goldLight = style.getPropertyValue('--gold-light').trim() || '#F2D574';
+    const bgDark = style.getPropertyValue('--bg-dark').trim() || '#050a06';
+
+    // 3. Draw Background (Velvet Style Radial)
+    const cx = size / 2;
+    const cy = size / 2;
     
-    ctx.fillStyle = bg; ctx.fillRect(0,0,size,size);
-    ctx.beginPath(); ctx.arc(size/2, size/2, (size/2)- (size * 0.05), 0, 2*Math.PI);
-    ctx.lineWidth = size * 0.04; ctx.strokeStyle = gold; ctx.stroke();
-    ctx.fillStyle = gold; ctx.font = `500 ${size * 0.4}px 'Playfair Display', serif`; 
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const bgGradient = ctx.createRadialGradient(cx, cy, size * 0.03, cx, cy, size * 0.7);
+    bgGradient.addColorStop(0, bgDark);    // Theme dark color in center
+    bgGradient.addColorStop(1, "#000000"); // Black vignette at edges
     
-    const initials = name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-    ctx.fillText(initials, size/2, size/2);
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, size, size);
+
+    // 4. Create Gold Gradient for Text
+    const textGradient = ctx.createLinearGradient(0, 0, size, size);
+    textGradient.addColorStop(0, gold);
+    textGradient.addColorStop(0.5, goldLight);
+    textGradient.addColorStop(1, gold);
+    ctx.fillStyle = textGradient;
+
+    // 5. Configure Typography
+    ctx.font = `italic 700 ${size * 0.53}px 'Playfair Display', serif`; 
+    ctx.textAlign = "center"; 
+    ctx.textBaseline = "middle";
+    
+    const initials = name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+    const char1 = initials[0] || '';
+    const char2 = initials[1] || '';
+
+    // 6. Draw Overlapping Letters with Shadow
+    // First Letter (Left)
+    ctx.globalAlpha = 1.0;
+    ctx.fillText(char1, cx - (size * 0.12), cy); 
+
+    // Second Letter (Right) - Shadow creates the "Knot" effect
+    ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+    ctx.shadowBlur = size * 0.06;
+    ctx.shadowOffsetX = -(size * 0.02);
+    ctx.fillText(char2, cx + (size * 0.12), cy); 
+    
+    // Reset Shadow for Swoosh
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+
+    // 7. Draw Underline Swoosh
+    ctx.strokeStyle = textGradient;
+    ctx.lineWidth = size * 0.015; 
+    ctx.lineCap = "round";
+    
+    ctx.beginPath();
+    ctx.moveTo(cx - (size * 0.27), cy + (size * 0.23)); // Start
+    ctx.quadraticCurveTo(
+        cx, cy + (size * 0.3),                 // Control Point
+        cx + (size * 0.27), cy + (size * 0.2)  // End
+    );
+    ctx.stroke();
+
     return canvas.toDataURL();
 }
 
