@@ -17,33 +17,97 @@
 
     <main class="app-container">
         
-        <section id="header-section"></section>
-        <section id="hero-section"></section> <section id="about-section"></section>
+        <section id="header-section">
+            <header class="profile-header">
+                <img src="" alt="Profile" class="profile-img">
+                <h1 class="brand-name">Loading...</h1>
+                <p class="tagline">...</p>
+            </header>
+        </section>
+
+        <section id="hero-section">
+            <div class="social-row"></div>
+        </section>
+
+        <section id="about-section"></section>
+
         <section id="how_to_order-section"></section>
-        <section id="collections-section"></section>
-        <section id="testimonials-section"></section>
+
+        <section id="collections-section">
+            <div class="section-header" style="margin-top: 10px;">
+                <h3>Collections</h3>
+                <span class="scroll-hint" onclick="toggleCollectionModal(true)" style="cursor: pointer;">View All &rarr;</span>
+            </div>
+            <div class="carousel-container">
+                <div class="skeleton-loader"></div>
+                <div class="skeleton-loader"></div>
+                <div class="skeleton-loader"></div>
+            </div>
+        </section>
+
+        <section id="testimonials-section">
+            <div class="section-header">
+                <h3>Happy Clients</h3>
+                <span class="scroll-hint">Live Proofs</span>
+            </div>
+            <div class="marquee-container">
+                <div class="marquee-track" id="testimonials-track"></div>
+            </div>
+        </section>
+
         <section id="vendor_access-section"></section>
-        <section id="delivery_proof-section"></section>
-        <section id="payment_proof-section"></section>
+
+        <section id="delivery_proof-section">
+            <div class="section-header">
+                <h3>Recent Deliveries</h3>
+            </div>
+            <div class="marquee-container">
+                <div class="marquee-track" id="delivery-track"></div>
+            </div>
+        </section>
+
+        <section id="payment_proof-section">
+            <div class="section-header">
+                <h3>Payment Proofs</h3>
+            </div>
+            <div class="marquee-container">
+                <div class="marquee-track" id="payment-track"></div>
+            </div>
+        </section>
 
         <footer class="footer">
-            <p>© 2025 Luxury Affairs. All Rights Reserved.</p>
+            <p>© 2025 Luxury E-Commerce. All Rights Reserved.</p>
         </footer>
 
     </main>
 
-    <div id="collection-modal" class="modal-overlay hidden" onclick="toggleCollectionModal(false)">
+    <div id="collection-modal" class="modal-overlay hidden">
+        <button class="close-btn-fixed" onclick="toggleCollectionModal(false)">
+            <i data-lucide="x"></i>
+        </button>
+        
         <div class="modal-content-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3>All Collections</h3>
-                <button class="close-btn" onclick="toggleCollectionModal(false)"><i data-lucide="x"></i></button>
             </div>
-            <div id="modal-grid-container" class="modal-grid"></div>
+            <div id="modal-grid-container" class="modal-grid">
+                </div>
         </div>
     </div>
 
-    <div id="image-zoom-modal" class="modal-overlay hidden" onclick="closeZoom()">
-        <span class="close-zoom-btn"><i data-lucide="x"></i></span>
+    <div id="image-zoom-modal" class="modal-overlay hidden" onclick="if(event.target === this) closeZoom()">
+        
+        <button class="close-zoom-btn" onclick="closeZoom()">
+            <i data-lucide="x"></i>
+        </button>
+        
+        <button class="nav-arrow nav-prev" onclick="event.stopPropagation(); navZoom(-1)">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <button class="nav-arrow nav-next" onclick="event.stopPropagation(); navZoom(1)">
+            <i data-lucide="chevron-right"></i>
+        </button>
+        
         <img class="modal-zoomed-img" id="img01">
     </div>
 

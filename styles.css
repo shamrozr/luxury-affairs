@@ -1,7 +1,7 @@
 /* === 1. VARIABLES & RESET === */
 :root {
     /* Default Theme (Will be overridden by CSV data) */
-    --bg-dark: #050a06;
+    --bg-dark: #050a06; 
     --bg-gradient: #1a3c24;
     --gold: #D4AF37;
     --gold-light: #F2D574;
@@ -10,6 +10,7 @@
     
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
+    
     --font-head: 'Playfair Display', serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -38,6 +39,7 @@ body {
 
 .hidden { display: none !important; }
 a { text-decoration: none; color: inherit; transition: 0.3s; }
+img { display: block; max-width: 100%; }
 
 /* === 2. REUSABLE COMPONENTS === */
 
@@ -68,7 +70,7 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 
 .text-content { font-size: 15px; line-height: 1.6; color: #e0e0e0; font-weight: 300; }
 
-/* Section Headers (for carousels outside cards) */
+/* Section Headers */
 .section-header {
     display: flex; justify-content: space-between; align-items: center;
     margin: 30px 5px 15px;
@@ -77,14 +79,12 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 .scroll-hint { font-size: 12px; color: var(--gold); }
 
 
-/* === 3. SPECIFIC SECTIONS === */
-
-/* Header & Profile */
+/* === 3. HEADER & PROFILE === */
 .profile-header { text-align: center; margin: 20px 0 30px; }
 .profile-img {
-    width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+    width: 130px; height: 130px; border-radius: 50%; object-fit: cover;
     border: 3px solid var(--gold); padding: 3px; background: rgba(0,0,0,0.3);
-    margin-bottom: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    margin: 0 auto 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 .brand-name {
     font-family: var(--font-head); font-size: 32px; margin-bottom: 5px;
@@ -94,7 +94,7 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 }
 .tagline { font-size: 13px; color: var(--text-muted); font-style: italic; }
 
-/* Social Icons (Glass Style) */
+/* Social Icons */
 .social-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
 .social-icon {
     width: 45px; height: 45px; border-radius: 50%;
@@ -107,7 +107,7 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
     transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
 }
 
-/* How to Order Steps */
+/* Steps (How to Order) */
 .step-item { display: flex; align-items: flex-start; margin-bottom: 15px; }
 .step-num {
     min-width: 28px; height: 28px; border: 1px solid var(--gold); color: var(--gold);
@@ -115,7 +115,7 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
     font-size: 12px; margin-right: 15px; font-weight: 600;
 }
 
-/* Vendor Section styles */
+/* Vendor Button */
 .vendor-price { font-size: 32px; font-weight: 700; color: white; margin: 15px 0; }
 .vendor-strike { font-size: 14px; font-weight: 400; color: #aaa; text-decoration: line-through; margin-left: 5px;}
 .btn-gold {
@@ -133,14 +133,15 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 .carousel-container {
     display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
     gap: 15px; padding-bottom: 20px;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
 }
-.carousel-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.carousel-container::-webkit-scrollbar { display: none; }
 
 .product-card {
-    flex: 0 0 140px; height: 200px; /* Portrait aspect */
+    flex: 0 0 140px; height: 200px;
     scroll-snap-align: start; border-radius: 15px; overflow: hidden;
     position: relative; border: 1px solid var(--glass-border);
+    cursor: pointer;
 }
 .product-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
 .product-card:hover .product-img { transform: scale(1.1); }
@@ -151,13 +152,28 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
 }
 .product-name { font-size: 12px; color: #fff; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
-/* Infinite Scroll Marquee (Proofs) */
+/* Skeleton Loader */
+.skeleton-loader {
+    flex: 0 0 140px; height: 200px; 
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
+
+
+/* Infinite Scroll Marquee */
 .marquee-container { overflow: hidden; white-space: nowrap; padding: 10px 0 30px; }
-.marquee-track { display: inline-flex; animation: scroll 25s linear infinite; gap: 15px; }
+.marquee-track { 
+    display: inline-flex; 
+    /* Slow speed (45s) as requested */
+    animation: scroll 45s linear infinite; 
+    gap: 15px; 
+}
 .marquee-track:hover { animation-play-state: paused; }
 
 .marquee-item {
-    width: 160px; height: 280px; /* Tall portrait screenshots */
+    width: 160px; height: 280px; 
     border-radius: 12px; overflow: hidden;
     border: 2px solid var(--glass-border); flex-shrink: 0;
     cursor: zoom-in; transition: transform 0.2s;
@@ -175,17 +191,73 @@ a { text-decoration: none; color: inherit; transition: 0.3s; }
     display: flex; justify-content: center; align-items: center;
     backdrop-filter: blur(10px);
 }
-.modal-content-card {
-    background: var(--bg-dark); border: 1px solid var(--gold);
-    padding: 25px; width: 90%; max-width: 400px; max-height: 80vh;
-    overflow-y: auto; border-radius: 20px;
-}
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h3 { font-family: var(--font-head); color: var(--gold); }
-.close-btn, .close-zoom-btn { background: none; border: none; color: #fff; cursor: pointer; }
 
+/* Collection Modal - Themed Background */
+.modal-content-card {
+    /* Uses the dynamic theme color, not black */
+    background: var(--bg-dark); 
+    border: 1px solid var(--gold);
+    padding: 25px; width: 95%; max-width: 500px; height: 90vh;
+    overflow-y: auto; border-radius: 20px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+.modal-header { margin-bottom: 20px; text-align: center; }
+.modal-header h3 { font-family: var(--font-head); color: var(--gold); }
+
+/* Grid for Modal */
 .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-.modal-zoomed-img { max-width: 95%; max-height: 90vh; border-radius: 8px; border: 2px solid var(--gold); }
-.close-zoom-btn { position: absolute; top: 20px; right: 20px; z-index: 10; background: rgba(0,0,0,0.5); border-radius: 50%; padding: 8px;}
+/* Fixed Close Button (Stuck to screen) */
+.close-btn-fixed {
+    position: fixed; 
+    top: 20px; right: 20px; 
+    z-index: 2005;
+    background: rgba(0,0,0,0.6); 
+    color: #fff;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--gold);
+    backdrop-filter: blur(5px);
+}
+
+/* Image Zoom Modal */
+.modal-zoomed-img { 
+    max-width: 95%; 
+    max-height: 80vh; 
+    /* Containment: Prevents cropping */
+    object-fit: contain; 
+    border-radius: 8px; 
+    border: 2px solid var(--gold);
+    background: #000;
+}
+
+.close-zoom-btn { 
+    position: absolute; top: 20px; right: 20px; 
+    z-index: 2010; 
+    background: rgba(0,0,0,0.5); color: #fff;
+    border-radius: 50%; padding: 10px; border: 1px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+}
+
+/* Navigation Arrows */
+.nav-arrow {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 2010;
+    transition: 0.2s;
+}
+.nav-arrow:hover { background: var(--gold); color: #000; }
+.nav-prev { left: 15px; }
+.nav-next { right: 15px; }
+
 .footer { text-align: center; color: var(--text-muted); padding-top: 20px; font-size: 12px; border-top: 1px solid var(--glass-border); }
