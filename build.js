@@ -1,41 +1,84 @@
 const fs = require('fs');
 const path = require('path');
 
-/* --- 1. CONFIGURATION (From Cloudflare Env Variables) --- */
-const CONFIG_DATA = {
-    // These names must match what you enter in Cloudflare Settings
-    theme_csv: process.env.THEME_CSV_URL || "",
-    links_csv: process.env.LINKS_CSV_URL || "",
-    collections_csv: process.env.COLLECTIONS_CSV_URL || ""
+/* --- CONFIGURATION --- */
+// Cloudflare provides these from your Environment Variables
+const CONFIG = {
+    theme_url: process.env.THEME_CSV_URL,
+    links_url: process.env.LINKS_CSV_URL,
+    collections_url: process.env.COLLECTIONS_CSV_URL
 };
 
-const ASSETS_DIR = './assets';
+const OUTPUT_DB = 'db.json';
 const OUTPUT_MANIFEST = 'manifest.json';
-const OUTPUT_CONFIG = 'config.json';
 
-/* --- 2. GENERATE MANIFEST (Auto-Scan Images) --- */
-function generateManifest() {
+/* --- 1. FETCH & PARSE CSV (The Speed Fix) --- */
+async function fetchAndParseCSV(url) {
+    if (!url) return [];
+    try {
+        const response = await fetch(url);
+        const text = await response.text();
+        
+        // Handle CSV parsing (handling quoted commas)
+        const pattern = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
+        const rows = [];
+        const lines = text.split('\n');
+        
+        lines.forEach(line => {
+            const row = [];
+            let inQuote = false;
+            let currentCell = '';
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') { inQuote = !inQuote; } 
+                else if (char === ',' && !inQuote) {
+                    row.push(currentCell.replace(/^"|"$/g, '').trim());
+                    currentCell = '';
+                } else { currentCell += char; }
+            }
+            row.push(currentCell.replace(/^"|"$/g, '').trim());
+            if(row.length > 1) rows.push(row);
+        });
+        return rows;
+    } catch (error) {
+        console.error("Error fetching CSV:", error);
+        return [];
+    }
+}
+
+async function buildDatabase() {
+    console.log("🚀 Downloading Google Sheets data...");
+    
+    const [themes, brands, collections] = await Promise.all([
+        fetchAndParseCSV(CONFIG.theme_url),
+        fetchAndParseCSV(CONFIG.links_url),
+        fetchAndParseCSV(CONFIG.collections_url)
+    ]);
+
+    const database = {
+        themes: themes,
+        brands: brands,
+        collections: collections
+    };
+
+    fs.writeFileSync(OUTPUT_DB, JSON.stringify(database, null, 2));
+    console.log(`✅ Data saved to ${OUTPUT_DB}`);
+}
+
+/* --- 2. GENERATE IMAGE MANIFEST --- */
+function buildManifest() {
     const manifest = {
         profile_images: [],
         testimonials: [],
         delivery_proofs: [],
-        payment_proofs: [],
-        // We scan collections too just to verify files exist, 
-        // though the CSV dictates which image goes with which category.
-        collection_images: [] 
+        payment_proofs: []
     };
 
-    const readDir = (manifestKey, folderName) => {
-        const fullPath = path.join(ASSETS_DIR, folderName);
+    const readDir = (key, folder) => {
+        const fullPath = path.join('./assets', folder);
         if (fs.existsSync(fullPath)) {
-            const files = fs.readdirSync(fullPath).filter(file => {
-                const ext = path.extname(file).toLowerCase();
-                return ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif'].includes(ext);
-            });
-            manifest[manifestKey] = files;
-            console.log(`✅ Found ${files.length} images in /${folderName}`);
-        } else {
-            console.warn(`⚠️ Warning: Folder /assets/${folderName} not found.`);
+            manifest[key] = fs.readdirSync(fullPath).filter(f => !f.startsWith('.'));
+            console.log(`📸 Found ${manifest[key].length} images in ${folder}`);
         }
     };
 
@@ -43,19 +86,13 @@ function generateManifest() {
     readDir('testimonials', 'testimonials');
     readDir('delivery_proofs', 'delivery_proofs');
     readDir('payment_proofs', 'payment_proofs');
-    readDir('collection_images', 'collections');
 
     fs.writeFileSync(OUTPUT_MANIFEST, JSON.stringify(manifest, null, 2));
 }
 
-/* --- 3. GENERATE CONFIG (Inject CSV Links) --- */
-function generateConfig() {
-    fs.writeFileSync(OUTPUT_CONFIG, JSON.stringify(CONFIG_DATA, null, 2));
-    console.log("✅ Config generated with remote CSV links.");
-}
-
-// Execute
-console.log("🚀 Starting Build Process...");
-generateManifest();
-generateConfig();
-console.log("🎉 Build Complete.");
+// Run Build
+(async () => {
+    await buildDatabase();
+    buildManifest();
+    console.log("🎉 Build Complete.");
+})();
