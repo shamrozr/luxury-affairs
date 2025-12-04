@@ -1,6 +1,6 @@
 /* === 1. VARIABLES & RESET === */
 :root {
-    /* Default Theme (Will be overridden by CSV data) */
+    /* Dynamic Theme Variables (Overridden by JS) */
     --bg-dark: #050a06; 
     --bg-gradient: #1a3c24;
     --gold: #D4AF37;
@@ -8,9 +8,11 @@
     --text-main: #ffffff;
     --text-muted: #a0a0a0;
     
+    /* Glassmorphism System */
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
     
+    /* Typography */
     --font-head: 'Playfair Display', serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -31,10 +33,10 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 500px; /* Narrow "Link-in-Bio" style */
+    max-width: 500px; /* Link-in-Bio Standard Width */
     margin: 0 auto;
     padding: 20px;
-    padding-bottom: 80px;
+    padding-bottom: 80px; /* Space for footer */
 }
 
 .hidden { display: none !important; }
@@ -43,7 +45,7 @@ img { display: block; max-width: 100%; }
 
 /* === 2. REUSABLE COMPONENTS === */
 
-/* Glassmorphism Card */
+/* Glass Card */
 .glass-card {
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
@@ -62,7 +64,6 @@ img { display: block; max-width: 100%; }
     margin-bottom: 16px;
     display: flex; align-items: center; gap: 10px;
 }
-/* Gold line after title */
 .card-title::after {
     content: ''; flex: 1; height: 1px;
     background: linear-gradient(to right, rgba(212, 175, 55, 0.5), transparent);
@@ -88,7 +89,6 @@ img { display: block; max-width: 100%; }
 }
 .brand-name {
     font-family: var(--font-head); font-size: 32px; margin-bottom: 5px;
-    /* Gold gradient text */
     background: linear-gradient(45deg, var(--gold), var(--gold-light));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
@@ -127,35 +127,46 @@ img { display: block; max-width: 100%; }
 .btn-gold:hover { transform: scale(1.02); }
 
 
-/* === 4. CAROUSELS & SLIDERS (UPDATED for Touch) === */
+/* === 4. CAROUSELS & SCROLLING (Unified) === */
 
-/* Common Container for Collections & Proofs */
+/* The Scrollable Container */
 .carousel-container, .marquee-container {
     display: flex;
-    overflow-x: auto; /* Enable Horizontal Scroll */
-    scroll-snap-type: x mandatory; /* Snap effect */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     gap: 15px;
     padding-bottom: 20px;
-    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     cursor: grab;
 }
 .carousel-container::-webkit-scrollbar, 
-.marquee-container::-webkit-scrollbar { 
-    display: none; /* Hide scrollbar Chrome/Safari */
-}
+.marquee-container::-webkit-scrollbar { display: none; }
 
-/* Ensure the inner track doesn't block scrolling */
+/* The Inner Track (Used for JS Auto-Scroll) */
 .marquee-track {
     display: flex;
     gap: 15px;
-    /* Animation removed here to allow drag. JS handles auto-scroll now. */
+    width: max-content; /* Ensure it stretches */
 }
 
-/* Common Item Style */
-.product-card, .marquee-item {
-    flex: 0 0 160px; /* Fixed width */
+/* -- 4A. COLLECTION ITEMS (Compact) -- */
+.product-card {
+    flex: 0 0 160px; 
     height: 250px;
+    scroll-snap-align: start;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    position: relative;
+    background: rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+
+/* -- 4B. PROOF ITEMS (Tall & Readable) -- */
+.marquee-item {
+    flex: 0 0 240px; /* Wider */
+    height: 420px;   /* Tall Portrait for Screenshots */
     scroll-snap-align: start;
     border-radius: 12px;
     overflow: hidden;
@@ -171,38 +182,27 @@ img { display: block; max-width: 100%; }
 }
 
 .product-img, .marquee-item img, .marquee-item video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100%; height: 100%; object-fit: cover;
 }
 
-/* Video Play Button Overlay */
+/* Video Play Overlay */
 .play-icon-overlay {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px; height: 50px;
-    background: rgba(0,0,0,0.6);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--gold);
-    pointer-events: none; /* Clicks pass through to item */
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 50px; height: 50px; background: rgba(0,0,0,0.6);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--gold); pointer-events: none;
 }
-.play-icon-overlay svg {
-    fill: #fff;
-    width: 20px; height: 20px;
-    margin-left: 3px;
-}
+.play-icon-overlay svg { fill: #fff; width: 20px; height: 20px; margin-left: 3px; }
 
-/* Collection Text Overlay */
+/* Collection Name Overlay */
 .product-overlay {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
     padding: 15px 10px 10px; text-align: center;
 }
-.product-name { font-size: 12px; color: #fff; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.product-name { font-size: 12px; color: #fff; font-weight: 600; text-transform: uppercase; }
 
-/* Skeleton Loader */
+/* Loading Skeleton */
 .skeleton-loader {
     flex: 0 0 160px; height: 250px; 
     background: rgba(255,255,255,0.05);
@@ -220,76 +220,50 @@ img { display: block; max-width: 100%; }
     backdrop-filter: blur(10px);
 }
 
-/* Collection Modal - Themed Background */
+/* Collection Grid Modal */
 .modal-content-card {
-    background: var(--bg-dark); 
-    border: 1px solid var(--gold);
+    background: var(--bg-dark); border: 1px solid var(--gold);
     padding: 25px; width: 95%; max-width: 500px; height: 90vh;
-    overflow-y: auto; border-radius: 20px;
-    position: relative;
+    overflow-y: auto; border-radius: 20px; position: relative;
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
 }
 .modal-header { margin-bottom: 20px; text-align: center; }
 .modal-header h3 { font-family: var(--font-head); color: var(--gold); }
-
-/* Grid for Modal */
 .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-/* Fixed Close Button (Stuck to screen) */
-.close-btn-fixed {
-    position: fixed; 
-    top: 20px; right: 20px; 
-    z-index: 2005;
-    background: rgba(0,0,0,0.6); 
-    color: #fff;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    border: 1px solid var(--gold);
-    backdrop-filter: blur(5px);
-}
-
-/* Image Zoom Modal */
+/* Zoom Modal */
 .modal-zoomed-img { 
-    max-width: 95%; 
-    max-height: 80vh; 
-    object-fit: contain; 
-    border-radius: 8px; 
-    border: 2px solid var(--gold);
-    background: #000;
+    max-width: 95%; max-height: 80vh; 
+    object-fit: contain; border-radius: 8px; 
+    border: 2px solid var(--gold); background: #000;
+}
+.modal-zoomed-video {
+    width: 100%; max-height: 80vh;
+    border: 2px solid var(--gold); border-radius: 8px; background: #000;
 }
 
-/* Video Player in Modal */
-.modal-zoomed-video {
-    width: 100%;
-    max-height: 80vh;
-    border: 2px solid var(--gold);
-    border-radius: 8px;
-    background: #000;
+/* Buttons */
+.close-btn-fixed {
+    position: fixed; top: 20px; right: 20px; z-index: 2005;
+    background: rgba(0,0,0,0.6); color: #fff;
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--gold); backdrop-filter: blur(5px);
 }
 
 .close-zoom-btn { 
-    position: absolute; top: 20px; right: 20px; 
-    z-index: 2010; 
+    position: absolute; top: 20px; right: 20px; z-index: 2010; 
     background: rgba(0,0,0,0.5); color: #fff;
     border-radius: 50%; padding: 10px; border: 1px solid rgba(255,255,255,0.3);
     cursor: pointer;
 }
 
-/* Navigation Arrows */
 .nav-arrow {
-    position: absolute;
-    top: 50%; transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: var(--gold);
-    border: 1px solid var(--gold);
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    z-index: 2010;
-    transition: 0.2s;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5); color: var(--gold);
+    border: 1px solid var(--gold); width: 50px; height: 50px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 2010; transition: 0.2s;
 }
 .nav-arrow:hover { background: var(--gold); color: #000; }
 .nav-prev { left: 15px; }
@@ -297,48 +271,22 @@ img { display: block; max-width: 100%; }
 
 .footer { text-align: center; color: var(--text-muted); padding-top: 20px; font-size: 12px; border-top: 1px solid var(--glass-border); }
 
-
-/* === 6. FLOATING WHATSAPP WIDGET === */
+/* === 6. FLOATING WHATSAPP === */
 .floating-wa {
-    position: fixed;
-    bottom: 30px;
-    right: 25px;
-    width: 60px;
-    height: 60px;
-    background-color: #25D366; /* Official WhatsApp Green */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 3000;
-    transition: transform 0.3s ease;
-    animation: wa-pulse 2s infinite;
+    position: fixed; bottom: 30px; right: 25px;
+    width: 60px; height: 60px; background-color: #25D366;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 3000;
+    transition: transform 0.3s ease; animation: wa-pulse 2s infinite;
 }
+.floating-wa:hover { transform: scale(1.1); }
+.floating-wa svg { width: 35px; height: 35px; fill: #ffffff; }
 
-.floating-wa:hover {
-    transform: scale(1.1);
-}
-
-.floating-wa svg {
-    width: 35px;
-    height: 35px;
-    fill: #ffffff;
-}
-
-/* Pulse Animation */
 @keyframes wa-pulse {
     0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
     70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
     100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
 }
-
-/* Mobile Responsiveness for Widget */
 @media (max-width: 480px) {
-    .floating-wa {
-        bottom: 20px;
-        right: 20px;
-        width: 55px;
-        height: 55px;
-    }
+    .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
 }
