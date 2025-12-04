@@ -2,11 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initApp();
 });
 
-let DB = {}; // Holds all data locally
+let DB = {}; 
 let BRAND_DATA = {}; 
 
 async function initApp() {
-    // 1. Fetch Local Database (Instant)
+    // 1. Fetch Local Database
     try {
         const res = await fetch('db.json');
         DB = await res.json();
@@ -14,16 +14,16 @@ async function initApp() {
 
     // 2. Identify Brand from URL
     const path = window.location.pathname.replace(/^\/|\/$/g, ''); 
-    const brandID = path || 'default'; // URL or default
+    const brandID = path || 'default'; 
 
     // 3. Process Data
     loadBrandData(brandID);
     loadCollections();
     
-    // 4. Load Images & HTML (This fixes the missing sections)
+    // 4. Load Images & HTML
     await loadImagesAndHTML();
 
-    // 5. Icons
+    // 5. Icons & Favicon
     setTimeout(() => { if(window.lucide) lucide.createIcons(); }, 100);
 }
 
@@ -31,10 +31,7 @@ async function initApp() {
 function loadBrandData(brandID) {
     const rows = DB.brands;
     
-    // Find Brand (Col A = BrandID)
     let brandRow = rows.find(r => r[0].trim() === brandID);
-    
-    // Fallback: If not found, try 'default', or just Row 1 (Index 1)
     if (!brandRow) brandRow = rows.find(r => r[0].trim() === 'default');
     if (!brandRow && rows.length > 1) brandRow = rows[1]; 
 
@@ -54,6 +51,7 @@ function loadBrandData(brandID) {
         
         applyTheme(BRAND_DATA.themeIndex);
         updateUI();
+        updateFavicon(); // <--- NEW: Updates Browser Tab Icon
     }
 }
 
@@ -74,12 +72,13 @@ function updateUI() {
     if(BRAND_DATA.img && BRAND_DATA.img.length > 4) {
         imgEl.src = `assets/profile/${BRAND_DATA.img}`;
     } else {
-        imgEl.src = generateLuxuryInitials(BRAND_DATA.name);
+        imgEl.src = generateLuxuryInitials(BRAND_DATA.name, 300);
     }
 
     // Text
     document.querySelector('.brand-name').textContent = BRAND_DATA.name;
     document.querySelector('.tagline').textContent = BRAND_DATA.tagline;
+    document.title = `${BRAND_DATA.name} | Luxury Store`; // Update Page Title
 
     // Socials
     const socialContainer = document.querySelector('.social-row');
@@ -90,41 +89,39 @@ function updateUI() {
     socialContainer.innerHTML = html;
 }
 
-/* --- 2. HTML SECTION LOADER (Fixes missing sections) --- */
+// === DYNAMIC FAVICON GENERATOR ===
+function updateFavicon() {
+    const link = document.getElementById('dynamic-favicon') || document.createElement('link');
+    link.id = 'dynamic-favicon';
+    link.rel = 'icon';
+    // Generate a tiny version (64x64) of the logo
+    link.href = generateLuxuryInitials(BRAND_DATA.name, 64);
+    document.head.appendChild(link);
+}
+
+/* --- 2. HTML SECTION LOADER --- */
 async function loadImagesAndHTML() {
     let manifest = {};
     try { const res = await fetch('manifest.json'); manifest = await res.json(); } catch(e) {}
 
-    // LIST OF ALL SECTIONS TO LOAD
-    const htmlFiles = [
-        'about', 
-        'how_to_order', 
-        'vendor_access', 
-        'testimonials', 
-        'delivery_proof', 
-        'payment_proof'
-    ];
+    const htmlFiles = ['about', 'how_to_order', 'vendor_access', 'testimonials', 'delivery_proof', 'payment_proof'];
 
     for (const file of htmlFiles) {
         try {
             const res = await fetch(`sections/${file}.html`);
             const html = await res.text();
             
-            // Inject HTML
             const el = document.getElementById(`${file}-section`);
             if(el) {
                 el.innerHTML = html;
                 
-                // Post-Injection Logic (Text replacement & Images)
                 if(file === 'about') {
                      document.querySelector('#about-section h2').innerText = `About ${BRAND_DATA.name}`;
                      document.querySelector('#about-section p').innerText = BRAND_DATA.about;
                 }
-                
                 if(file === 'vendor_access') {
                     if(BRAND_DATA.vendor) document.querySelector('#vendor_access-section a').href = BRAND_DATA.vendor;
                 }
-
                 if(['testimonials', 'delivery_proof', 'payment_proof'].includes(file)) {
                     loadMarqueeImages(file, manifest);
                 }
@@ -137,13 +134,16 @@ function loadMarqueeImages(key, manifest) {
     let images = [];
     let path = '';
     
+    // Correctly mapping keys to Manifest arrays
     if(key === 'testimonials') { images = manifest.testimonials; path = 'assets/testimonials/'; }
     if(key === 'delivery_proof') { images = manifest.delivery_proofs; path = 'assets/delivery_proofs/'; }
     if(key === 'payment_proof') { images = manifest.payment_proofs; path = 'assets/payment_proofs/'; }
 
+    // Logic: Look for ID matching the key + "-track"
     const track = document.getElementById(`${key}-track`);
+    
     if(track && images.length > 0) {
-        const fullList = [...images, ...images, ...images]; // Triple loop
+        const fullList = [...images, ...images, ...images]; 
         let html = '';
         fullList.forEach((img, idx) => {
              const realIdx = idx % images.length;
@@ -158,18 +158,14 @@ function loadMarqueeImages(key, manifest) {
 
 /* --- 3. COLLECTIONS --- */
 function loadCollections() {
-    const rows = DB.collections.slice(1); // Skip header
+    const rows = DB.collections.slice(1); 
     const grid = document.querySelector('.carousel-container');
     
     let html = '';
-    // Top 6
     rows.slice(0, 6).forEach(r => {
         if(!r[0]) return;
         const img = r[1] ? `assets/collections/${r[1].trim()}` : 'assets/placeholder.jpg';
-        // Check for link in column [2]
         const link = r[2] ? r[2] : null; 
-        
-        // If link exists, open in new tab. If not, open modal.
         const clickAction = link ? `window.open('${link}', '_blank')` : 'toggleCollectionModal(true)';
         
         html += `
@@ -181,26 +177,33 @@ function loadCollections() {
     grid.innerHTML = html;
 }
 
-// LOGO GENERATOR
-function generateLuxuryInitials(name) {
+// LOGO GENERATOR (Resizes based on input)
+function generateLuxuryInitials(name, size) {
     if(!name) return '';
     const canvas = document.createElement('canvas');
-    canvas.width = 300; canvas.height = 300;
+    canvas.width = size; canvas.height = size;
     const ctx = canvas.getContext('2d');
     const style = getComputedStyle(document.documentElement);
-    const gold = style.getPropertyValue('--gold').trim();
-    const bg = style.getPropertyValue('--bg-dark').trim();
+    const gold = style.getPropertyValue('--gold').trim() || '#D4AF37';
+    const bg = style.getPropertyValue('--bg-dark').trim() || '#000000';
     
-    ctx.fillStyle = bg; ctx.fillRect(0,0,300,300);
-    ctx.beginPath(); ctx.arc(150,150,140,0,2*Math.PI);
-    ctx.lineWidth = 6; ctx.strokeStyle = gold; ctx.stroke();
+    // Background
+    ctx.fillStyle = bg; ctx.fillRect(0,0,size,size);
     
+    // Ring (Scale line width based on size)
+    ctx.beginPath(); 
+    ctx.arc(size/2, size/2, (size/2)- (size * 0.05), 0, 2*Math.PI);
+    ctx.lineWidth = size * 0.04; 
+    ctx.strokeStyle = gold; ctx.stroke();
+    
+    // Text
     ctx.fillStyle = gold; 
-    ctx.font = "500 110px 'Playfair Display', serif"; 
+    // Scale font size based on canvas size
+    ctx.font = `500 ${size * 0.4}px 'Playfair Display', serif`; 
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     
     const initials = name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-    ctx.fillText(initials, 150, 150);
+    ctx.fillText(initials, size/2, size/2);
     return canvas.toDataURL();
 }
 
