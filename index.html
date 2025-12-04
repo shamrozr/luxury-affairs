@@ -5,50 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luxury Affairs Store</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
     
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div id="theme-data" style="display:none;"></div>
-
-    <main class="luxury-container">
+    <main class="app-container">
         
-        <section id="header-section" class="dynamic-section"></section>
+        <section id="header-section"></section>
+        <section id="hero-section"></section> <section id="about-section"></section>
+        <section id="how_to_order-section"></section>
+        <section id="collections-section"></section>
+        <section id="testimonials-section"></section>
+        <section id="vendor_access-section"></section>
+        <section id="delivery_proof-section"></section>
+        <section id="payment_proof-section"></section>
 
-        <section id="hero-section" class="dynamic-section"></section>
-
-        <section id="about-section" class="dynamic-section"></section>
-
-        <section id="howto-section" class="dynamic-section"></section>
-
-        <section id="collections-section" class="dynamic-section"></section>
-
-        <section id="testimonials-section" class="dynamic-section"></section>
-
-        <section id="vendor-section" class="dynamic-section"></section>
-
-        <section id="delivery-section" class="dynamic-section"></section>
-
-        <section id="payment-section" class="dynamic-section"></section>
+        <footer class="footer">
+            <p>© 2025 Luxury Affairs. All Rights Reserved.</p>
+        </footer>
 
     </main>
 
-    <div id="collection-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="close-modal-btn" onclick="toggleCollectionModal(false)">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <h2>All Collections</h2>
-            <div id="modal-grid-container" class="grid-layout">
-                </div>
+    <div id="collection-modal" class="modal-overlay hidden" onclick="toggleCollectionModal(false)">
+        <div class="modal-content-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>All Collections</h3>
+                <button class="close-btn" onclick="toggleCollectionModal(false)"><i data-lucide="x"></i></button>
+            </div>
+            <div id="modal-grid-container" class="modal-grid"></div>
         </div>
     </div>
 
-    <div id="image-zoom-modal" class="modal-overlay hidden">
-        <span class="close-zoom" onclick="closeZoom()">&times;</span>
-        <img class="modal-content-img" id="img01">
+    <div id="image-zoom-modal" class="modal-overlay hidden" onclick="closeZoom()">
+        <span class="close-zoom-btn"><i data-lucide="x"></i></span>
+        <img class="modal-zoomed-img" id="img01">
     </div>
 
     <script src="script.js"></script>
