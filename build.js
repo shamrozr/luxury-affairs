@@ -71,14 +71,15 @@ function buildManifest() {
         profile_images: [],
         testimonials: [],
         delivery_proofs: [],
-        payment_proofs: []
+        payment_proofs: [],
+        videos: [] 
     };
 
     const readDir = (key, folder) => {
         const fullPath = path.join('./assets', folder);
         if (fs.existsSync(fullPath)) {
             manifest[key] = fs.readdirSync(fullPath).filter(f => !f.startsWith('.'));
-            console.log(`📸 Found ${manifest[key].length} images in ${folder}`);
+            console.log(`📸 Found ${manifest[key].length} files in ${folder}`);
         }
     };
 
@@ -86,6 +87,7 @@ function buildManifest() {
     readDir('testimonials', 'testimonials');
     readDir('delivery_proofs', 'delivery_proofs');
     readDir('payment_proofs', 'payment_proofs');
+    readDir('videos', 'videos'); // <--- ADDED: Scans your videos folder
 
     fs.writeFileSync(OUTPUT_MANIFEST, JSON.stringify(manifest, null, 2));
 }
