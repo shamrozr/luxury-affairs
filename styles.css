@@ -330,3 +330,4 @@ img { display: block; max-width: 100%; }
 @media (max-width: 480px) {
     .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
 }
+

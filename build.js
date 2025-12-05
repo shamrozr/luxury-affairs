@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 /* --- CONFIGURATION --- */
-// Cloudflare provides these from your Environment Variables
 const CONFIG = {
     theme_url: process.env.THEME_CSV_URL,
     links_url: process.env.LINKS_CSV_URL,
@@ -12,7 +11,7 @@ const CONFIG = {
 const OUTPUT_DB = 'db.json';
 const OUTPUT_MANIFEST = 'manifest.json';
 
-/* --- 1. FETCH & PARSE CSV (The Speed Fix) --- */
+/* --- 1. FETCH & PARSE CSV --- */
 async function fetchAndParseCSV(url) {
     if (!url) return [];
     try {
@@ -78,6 +77,7 @@ function buildManifest() {
     const readDir = (key, folder) => {
         const fullPath = path.join('./assets', folder);
         if (fs.existsSync(fullPath)) {
+            // Filter to ensure we only get files, not system files like .DS_Store
             manifest[key] = fs.readdirSync(fullPath).filter(f => !f.startsWith('.'));
             console.log(`📸 Found ${manifest[key].length} files in ${folder}`);
         }
@@ -87,7 +87,7 @@ function buildManifest() {
     readDir('testimonials', 'testimonials');
     readDir('delivery_proofs', 'delivery_proofs');
     readDir('payment_proofs', 'payment_proofs');
-    readDir('videos', 'videos'); // <--- ADDED: Scans your videos folder
+    readDir('videos', 'videos'); // Scans the new videos folder
 
     fs.writeFileSync(OUTPUT_MANIFEST, JSON.stringify(manifest, null, 2));
 }

@@ -23,12 +23,12 @@ async function initApp() {
     
     // 4. Load Images & HTML & Videos
     await loadImagesAndHTML();
-    await loadPromoVideos(); // <--- This loads the random videos
-
+    
     // 5. Initialize Icons & Auto Scroll
     setTimeout(() => { 
         if(window.lucide) lucide.createIcons(); 
-        startSmartAutoScroll(); 
+        startSmartAutoScroll();
+        loadPromoVideos(); // Load videos after initial render for speed
     }, 500);
 }
 
@@ -310,7 +310,7 @@ function startSmartAutoScroll() {
     });
 }
 
-/* --- 5. RANDOM VIDEO SECTIONS (OPTIMIZED) --- */
+/* --- 5. RANDOM VIDEO SECTIONS --- */
 async function loadPromoVideos() {
     let manifest = {};
     try { 
@@ -321,18 +321,18 @@ async function loadPromoVideos() {
     const videos = manifest.videos || [];
     if (videos.length < 1) return;
 
-    // 1. Shuffle Array - Highly efficient way to get random
+    // 1. Shuffle Array - Efficient randomization
     const shuffled = videos.sort(() => 0.5 - Math.random());
 
     // 2. Select up to 2 unique videos
     const video1 = shuffled[0];
     const video2 = shuffled[1] || shuffled[0]; 
 
-    // 3. Render Sections (Only renders if video exists)
+    // 3. Render Sections
     if(video1) renderVideoCard('promo-video-1', `assets/videos/${video1}`);
     if(video2 && videos.length > 1) renderVideoCard('promo-video-2', `assets/videos/${video2}`);
     
-    // 4. Start Observer (Crucial for Performance)
+    // 4. Start Observer (Performance Optimized)
     initVideoObserver();
 }
 
@@ -340,7 +340,6 @@ function renderVideoCard(targetId, src) {
     const container = document.getElementById(targetId);
     if (!container) return;
 
-    // Playsinline and muted are required for auto-play on mobile
     container.innerHTML = `
         <div class="glass-card video-card">
             <video src="${src}" class="promo-video" muted playsinline loop preload="metadata"></video>
@@ -376,7 +375,8 @@ function initVideoObserver() {
         entries.forEach(entry => {
             const video = entry.target;
             if (entry.isIntersecting) {
-                video.play().catch(e => { /* Autoplay might be blocked, silent fail */ });
+                // Only play if browser allows (user has interacted or video is muted)
+                video.play().catch(e => console.log("Autoplay waiting for interaction"));
             } else {
                 video.pause();
             }
@@ -385,6 +385,9 @@ function initVideoObserver() {
 
     const videos = document.querySelectorAll('.promo-video');
     videos.forEach(v => observer.observe(v));
+    
+    // Trigger Lucide icons again for the new video overlays
+    if(window.lucide) lucide.createIcons();
 }
 
 /* --- 6. MODALS --- */
