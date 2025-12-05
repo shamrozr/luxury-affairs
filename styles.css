@@ -19,6 +19,11 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
+/* DISABLE DOUBLE-TAP ZOOM ON INTERACTIVE ELEMENTS */
+a, button, input, textarea, select, .marquee-item, .product-card, .nav-arrow, .close-zoom-btn, .video-card {
+    touch-action: manipulation; 
+}
+
 body {
     background: var(--bg-dark);
     /* Radial gradient background */
@@ -139,6 +144,9 @@ img { display: block; max-width: 100%; }
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     cursor: grab;
+    
+    /* Ensure touches are handled immediately, preventing zoom delays */
+    touch-action: pan-x pan-y; 
 }
 .carousel-container::-webkit-scrollbar, 
 .marquee-container::-webkit-scrollbar { display: none; }
@@ -330,4 +338,3 @@ img { display: block; max-width: 100%; }
 @media (max-width: 480px) {
     .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
 }
-
