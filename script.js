@@ -21,13 +21,14 @@ async function initApp() {
     loadBrandData(brandID);
     loadCollections();
     
-    // 4. Load Images & HTML (Await ensures DOM is ready for scroll)
+    // 4. Load Images & HTML & Videos
     await loadImagesAndHTML();
+    await loadPromoVideos(); // <--- This loads the random videos
 
     // 5. Initialize Icons & Auto Scroll
     setTimeout(() => { 
         if(window.lucide) lucide.createIcons(); 
-        startSmartAutoScroll(); // Start moving only after images exist
+        startSmartAutoScroll(); 
     }, 500);
 }
 
@@ -77,7 +78,6 @@ function updateUI() {
     if(BRAND_DATA.img && BRAND_DATA.img.length > 4) {
         imgEl.src = `assets/profile/${BRAND_DATA.img}`;
     } else {
-        // Generates the new Signature Knot Logo if no image is uploaded
         imgEl.src = generateLuxuryInitials(BRAND_DATA.name, 300);
     }
 
@@ -310,7 +310,84 @@ function startSmartAutoScroll() {
     });
 }
 
-/* --- 5. MODALS & VIDEOS --- */
+/* --- 5. RANDOM VIDEO SECTIONS (OPTIMIZED) --- */
+async function loadPromoVideos() {
+    let manifest = {};
+    try { 
+        const res = await fetch('manifest.json'); 
+        manifest = await res.json(); 
+    } catch(e) { console.error("Manifest Error", e); return; }
+
+    const videos = manifest.videos || [];
+    if (videos.length < 1) return;
+
+    // 1. Shuffle Array - Highly efficient way to get random
+    const shuffled = videos.sort(() => 0.5 - Math.random());
+
+    // 2. Select up to 2 unique videos
+    const video1 = shuffled[0];
+    const video2 = shuffled[1] || shuffled[0]; 
+
+    // 3. Render Sections (Only renders if video exists)
+    if(video1) renderVideoCard('promo-video-1', `assets/videos/${video1}`);
+    if(video2 && videos.length > 1) renderVideoCard('promo-video-2', `assets/videos/${video2}`);
+    
+    // 4. Start Observer (Crucial for Performance)
+    initVideoObserver();
+}
+
+function renderVideoCard(targetId, src) {
+    const container = document.getElementById(targetId);
+    if (!container) return;
+
+    // Playsinline and muted are required for auto-play on mobile
+    container.innerHTML = `
+        <div class="glass-card video-card">
+            <video src="${src}" class="promo-video" muted playsinline loop preload="metadata"></video>
+            <div class="video-hint-overlay">
+                <i data-lucide="maximize-2" style="width:12px; height:12px;"></i> Tap to Expand
+            </div>
+        </div>
+    `;
+
+    // Add Click to Fullscreen Listener
+    const videoEl = container.querySelector('video');
+    videoEl.addEventListener('click', () => {
+        if (videoEl.requestFullscreen) {
+            videoEl.requestFullscreen();
+        } else if (videoEl.webkitRequestFullscreen) { /* Safari */
+            videoEl.webkitRequestFullscreen();
+        } else if (videoEl.msRequestFullscreen) { /* IE11 */
+            videoEl.msRequestFullscreen();
+        }
+        // Unmute when expanded
+        videoEl.muted = false;
+    });
+
+    // Re-mute when exiting fullscreen
+    document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) videoEl.muted = true;
+    });
+}
+
+function initVideoObserver() {
+    // This Observer saves battery and data by pausing videos when not looking at them
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const video = entry.target;
+            if (entry.isIntersecting) {
+                video.play().catch(e => { /* Autoplay might be blocked, silent fail */ });
+            } else {
+                video.pause();
+            }
+        });
+    }, { threshold: 0.5 }); // 50% visibility required to play
+
+    const videos = document.querySelectorAll('.promo-video');
+    videos.forEach(v => observer.observe(v));
+}
+
+/* --- 6. MODALS --- */
 function toggleCollectionModal(show) {
     const modal = document.getElementById('collection-modal');
     const grid = document.getElementById('modal-grid-container');
