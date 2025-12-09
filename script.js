@@ -216,6 +216,15 @@ async function loadImagesAndHTML() {
             
             const el = document.getElementById(`${file}-section`);
             if(el) {
+                // DYNAMIC VISIBILITY CHECK
+                if (file === 'vendor_access' && (!BRAND_DATA.vendor || BRAND_DATA.vendor.trim() === '')) {
+                    el.classList.add('hidden');
+                    el.innerHTML = ''; // Clear content just in case
+                    continue; // Skip the rest of the logic for this file
+                } else {
+                    el.classList.remove('hidden'); // Ensure it's shown if data exists
+                }
+
                 el.innerHTML = html;
                 
                 if(file === 'about') {
