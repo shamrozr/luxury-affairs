@@ -8,8 +8,9 @@ let AUTO_SCROLL_INTERVALS = [];
 
 async function initApp() {
     // 1. Fetch Local Database (Created by build.js)
+    // Added timestamp to force fresh data load (bypassing cache)
     try {
-        const res = await fetch('db.json');
+        const res = await fetch(`db.json?t=${new Date().getTime()}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         DB = await res.json();
     } catch (e) { 
@@ -47,9 +48,16 @@ function loadBrandData(brandID) {
     if (!DB.brands) return;
     const rows = DB.brands;
     
+    // Normalize for comparison (Case Insensitive)
+    const searchID = brandID.trim().toLowerCase();
+    
     // Logic: URL Match -> Default -> First Row
-    let brandRow = rows.find(r => r[0] && r[0].trim() === brandID);
-    if (!brandRow) brandRow = rows.find(r => r[0] && r[0].trim() === 'default');
+    let brandRow = rows.find(r => r[0] && r[0].trim().toLowerCase() === searchID);
+    
+    // If not found, try default
+    if (!brandRow) brandRow = rows.find(r => r[0] && r[0].trim().toLowerCase() === 'default');
+    
+    // If still not found, fallback to the first data row (index 1)
     if (!brandRow && rows.length > 1) brandRow = rows[1]; 
 
     if (brandRow) {
@@ -216,13 +224,19 @@ async function loadImagesAndHTML() {
             
             const el = document.getElementById(`${file}-section`);
             if(el) {
-                // DYNAMIC VISIBILITY CHECK
-                if (file === 'vendor_access' && (!BRAND_DATA.vendor || BRAND_DATA.vendor.trim() === '')) {
-                    el.classList.add('hidden');
-                    el.innerHTML = ''; // Clear content just in case
-                    continue; // Skip the rest of the logic for this file
-                } else {
-                    el.classList.remove('hidden'); // Ensure it's shown if data exists
+                // DYNAMIC VISIBILITY CHECK (UPDATED for stricter checking)
+                if (file === 'vendor_access') {
+                    const v = BRAND_DATA.vendor;
+                    // Check if exists, is not empty, is not placeholder '#' and is not literally 'null' string
+                    const hasValidLink = v && v.trim() !== '' && v.trim() !== '#' && v.toLowerCase() !== 'null';
+                    
+                    if (!hasValidLink) {
+                        el.classList.add('hidden');
+                        el.innerHTML = ''; 
+                        continue; 
+                    } else {
+                        el.classList.remove('hidden');
+                    }
                 }
 
                 el.innerHTML = html;
