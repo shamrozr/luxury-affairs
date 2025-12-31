@@ -334,6 +334,7 @@ img { display: block; max-width: 100%; }
 }
 @media (max-width: 480px) {
     .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
+<<<<<<< HEAD
 }
 
 /* === 7. DISCORD SIDEBAR === */
@@ -378,4 +379,6 @@ img { display: block; max-width: 100%; }
     letter-spacing: 1.5px;
     text-transform: uppercase;
     font-family: var(--font-body);
+=======
+>>>>>>> parent of f4b7ef5 (discord addition)
 }
