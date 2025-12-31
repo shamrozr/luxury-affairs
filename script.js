@@ -516,3 +516,71 @@ function closeZoom() {
     const existingVideo = document.getElementById('modal-active-video');
     if(existingVideo) existingVideo.remove();
 }
+/* ===============================
+   FORCE DISCORD FLOATING SIDEBAR
+   =============================== */
+(function forceDiscordFloating() {
+  function applyDiscord() {
+    const d = document.querySelector('.discord-sidebar');
+    if (!d) return;
+
+    // Always move to body
+    if (d.parentNode !== document.body) {
+      document.body.appendChild(d);
+    }
+
+    // Inline styles = immune to CSS/layout resets
+    Object.assign(d.style, {
+      position: 'fixed',
+      top: '50%',
+      right: '0px',
+      transform: 'translateY(-50%)',
+      width: '60px',
+      padding: '18px 10px',
+      background: 'rgba(0,0,0,0.55)',
+      backdropFilter: 'blur(14px) saturate(160%)',
+      WebkitBackdropFilter: 'blur(14px) saturate(160%)',
+      borderRadius: '18px 0 0 18px',
+      border: '1px solid rgba(255,255,255,0.12)',
+      borderRight: 'none',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '14px',
+      zIndex: '999999',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.75)',
+      textDecoration: 'none',
+      animation: 'discord-glass-pulse 2.2s infinite'
+    });
+
+    // Icon color (Discord purple)
+    const logo = d.querySelector('.discord-logo');
+    if (logo) {
+      logo.style.color = '#5865F2';
+      logo.style.width = '30px';
+      logo.style.height = '30px';
+    }
+
+    // Vertical text
+    const text = d.querySelector('.discord-text');
+    if (text) {
+      Object.assign(text.style, {
+        writingMode: 'vertical-rl',
+        transform: 'rotate(180deg)',
+        fontSize: '12px',
+        fontWeight: '700',
+        letterSpacing: '1.2px',
+        color: '#fff',
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap'
+      });
+    }
+  }
+
+  // Run on load
+  window.addEventListener('load', applyDiscord);
+
+  // Run again after DOM mutations (Cloudflare / hydration safe)
+  const observer = new MutationObserver(applyDiscord);
+  observer.observe(document.body, { childList: true, subtree: true });
+})();

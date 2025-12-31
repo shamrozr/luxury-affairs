@@ -336,76 +336,8 @@ img { display: block; max-width: 100%; }
     .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
 }
 
-/* =================================================
-   DISCORD FLOATING SIDEBAR — BLACK GLASS FINAL
-   ================================================= */
-
 @keyframes discord-glass-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0.6); }
   70%  { box-shadow: 0 0 0 18px rgba(0,0,0,0); }
   100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
 }
-
-.discord-sidebar {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-
-  width: 60px;
-  padding: 18px 10px;
-
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-
-  border-radius: 18px 0 0 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-right: none;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-
-  z-index: 999999;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.75);
-  animation: discord-glass-pulse 2.2s infinite;
-
-  text-decoration: none;
-}
-
-/* hover peek */
-.discord-sidebar:hover {
-  transform: translateY(-50%) translateX(-8px);
-}
-
-/* Discord icon — OFFICIAL PURPLE */
-.discord-logo {
-  width: 30px;
-  height: 30px;
-  color: #5865F2; /* Discord brand purple */
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
-}
-
-/* vertical text */
-.discord-text {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-/* optional: hide on small screens */
-@media (max-width: 520px) {
-  .discord-sidebar {
-    display: none;
-  }
-}
-
