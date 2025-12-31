@@ -336,8 +336,9 @@ img { display: block; max-width: 100%; }
     .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
 }
 
-/* === 7. DISCORD SIDEBAR === */
-/* Added Pulse Animation for Discord */
+/* === 7. DISCORD SIDEBAR FIXED === */
+/* This is now OUTSIDE any media query */
+
 @keyframes discord-pulse {
     0% { box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.7); }
     70% { box-shadow: 0 0 0 15px rgba(88, 101, 242, 0); }
@@ -346,43 +347,44 @@ img { display: block; max-width: 100%; }
 
 .discord-sidebar {
     position: fixed;
-    right: 0; /* CHANGED TO RIGHT */
+    right: 0; /* Forces it to the RIGHT edge */
     top: 50%;
     transform: translateY(-50%);
-    background-color: #5865F2; /* Discord Blue/Purple */
+    background-color: #5865F2; /* Official Discord Color */
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-right: none;
-    border-radius: 12px 0 0 12px; /* Rounded on left side */
-    padding: 15px 8px;
-    z-index: 4000; /* High z-index to sit on top */
+    border-right: none; /* No border on the side touching the wall */
+    border-radius: 12px 0 0 12px; /* Rounded corners pointing inward */
+    padding: 20px 10px;
+    z-index: 9999; /* Higher than everything else */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     text-decoration: none;
     /* Animation */
     animation: discord-pulse 2s infinite;
     transition: transform 0.3s ease;
+    width: 50px; /* Fixed width for the vertical strip */
 }
 
 .discord-sidebar:hover {
-    transform: translateY(-50%) translateX(-5px); /* Move left slightly on hover */
+    transform: translateY(-50%) translateX(-5px); /* Peek out effect on hover */
 }
 
 .discord-logo {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     color: #ffffff;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .discord-text {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
+    writing-mode: vertical-rl; /* Makes text vertical */
+    text-orientation: mixed; /* Rotates letters */
+    transform: rotate(180deg); /* Flips text so it reads bottom-to-top */
     color: #fff;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: 1px;
     text-transform: uppercase;
     font-family: var(--font-body);
