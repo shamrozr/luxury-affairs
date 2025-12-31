@@ -346,21 +346,21 @@ img { display: block; max-width: 100%; }
 
 .discord-sidebar {
     position: fixed;
-    right: 0; /* MOVED TO RIGHT */
+    right: 0; /* CHANGED TO RIGHT */
     top: 50%;
     transform: translateY(-50%);
-    background-color: #000;
-    border: 1px solid #5865F2; /* Discord Blurple */
-    border-right: none; /* Changed from border-left to border-right */
-    border-radius: 12px 0 0 12px; /* Curved corners on the left side */
-    padding: 20px 8px;
-    z-index: 4000;
+    background-color: #5865F2; /* Discord Blue/Purple */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: none;
+    border-radius: 12px 0 0 12px; /* Rounded on left side */
+    padding: 15px 8px;
+    z-index: 4000; /* High z-index to sit on top */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     text-decoration: none;
-    /* Added Pulse Animation */
+    /* Animation */
     animation: discord-pulse 2s infinite;
     transition: transform 0.3s ease;
 }
@@ -370,10 +370,10 @@ img { display: block; max-width: 100%; }
 }
 
 .discord-logo {
-    width: 28px;
-    height: 28px;
-    color: #5865F2;
-    filter: drop-shadow(0 0 5px rgba(88, 101, 242, 0.8));
+    width: 24px;
+    height: 24px;
+    color: #ffffff;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .discord-text {
@@ -381,9 +381,10 @@ img { display: block; max-width: 100%; }
     text-orientation: mixed;
     transform: rotate(180deg);
     color: #fff;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 13px;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     font-family: var(--font-body);
+    white-space: nowrap;
 }
