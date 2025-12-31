@@ -336,84 +336,76 @@ img { display: block; max-width: 100%; }
     .floating-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; }
 }
 
-/* =========================================================
-   DISCORD FLOATING SIDEBAR — FINAL (CLEAN & FIXED)
-   ========================================================= */
+/* =================================================
+   DISCORD FLOATING SIDEBAR — BLACK GLASS FINAL
+   ================================================= */
 
-/* Pulse animation */
-@keyframes discord-pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 18px rgba(88, 101, 242, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(88, 101, 242, 0);
-    }
+@keyframes discord-glass-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0.6); }
+  70%  { box-shadow: 0 0 0 18px rgba(0,0,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
 }
 
-/* Main floating container */
 .discord-sidebar {
-    position: fixed !important;
-    top: 50% !important;
-    right: 0 !important;
-    transform: translateY(-50%) !important;
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 
-    width: 56px;
-    padding: 18px 10px;
+  width: 60px;
+  padding: 18px 10px;
 
-    background: linear-gradient(180deg, #5f78ff 0%, #445be0 100%);
-    border-radius: 14px 0 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-right: none;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
 
-    z-index: 999999;
+  border-radius: 18px 0 0 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-right: none;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
 
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
-    animation: discord-pulse 2s infinite;
-    transition: transform 0.25s ease;
+  z-index: 999999;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.75);
+  animation: discord-glass-pulse 2.2s infinite;
 
-    text-decoration: none;
+  text-decoration: none;
 }
 
-/* Hover peek */
+/* hover peek */
 .discord-sidebar:hover {
-    transform: translateY(-50%) translateX(-8px) !important;
+  transform: translateY(-50%) translateX(-8px);
 }
 
-/* Discord icon */
+/* Discord icon — OFFICIAL PURPLE */
 .discord-logo {
-    width: 30px;
-    height: 30px;
-    color: #ffffff;
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  width: 30px;
+  height: 30px;
+  color: #5865F2; /* Discord brand purple */
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
 }
 
-/* Vertical text */
+/* vertical text */
 .discord-text {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
 
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    white-space: nowrap;
-
-    color: #ffffff;
-    font-family: var(--font-body, Arial, sans-serif);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-/* Hide on very small screens (optional) */
-@media (max-width: 480px) {
-    .discord-sidebar {
-        display: none;
-    }
+/* optional: hide on small screens */
+@media (max-width: 520px) {
+  .discord-sidebar {
+    display: none;
+  }
 }
+
